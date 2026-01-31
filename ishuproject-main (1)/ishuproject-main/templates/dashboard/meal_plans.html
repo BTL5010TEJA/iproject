@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Meal Plans - Maternal Food Recommendation AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    #meal-plan-table {
+        font-size: 0.9rem;
+    }
+    
+    #meal-plan-table th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .table-container {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .nutrition-card {
+        border-left: 4px solid #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-utensils text-success"></i> Meal Plan Generator
+            </h1>
+            <p class="lead text-muted">
+                Generate personalized meal plans based on your trimester, preferences, and nutritional needs.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Meal Plan Form -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-cog"></i> Plan Settings
+                </div>
+                <div class="card-body">
+                    <form id="meal-plan-form">
+                        <div class="mb-3">
+                            <label for="days" class="form-label">Number of Days</label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="days" 
+                                min="1" 
+                                max="30" 
+                                value="7"
+                                required
+                            >
+                            <small class="text-muted">1-30 days</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="region" class="form-label">Regional Preference</label>
+                            <select class="form-select" id="region">
+                                <option value="">All Regions</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="diet-type" class="form-label">Diet Type</label>
+                            <select class="form-select" id="diet-type">
+                                <option value="">Default ({{ current_user.dietary_preferences }})</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-magic"></i> Generate Meal Plan
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Current Trimester Info -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-info-circle"></i> Your Information
+                </div>
+                <div class="card-body">
+                    <p><strong>Trimester:</strong> {{ current_user.current_trimester }}</p>
+                    <p><strong>Dietary Preference:</strong> {{ current_user.dietary_preferences|default('vegetarian')|title }}</p>
+                    <p class="mb-0"><small class="text-muted">Meal plans are customized for your trimester</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Generating your personalized meal plan...</p>
+            </div>
+
+            <!-- Initial State -->
+            <div id="initial-state" class="text-center py-5">
+                <i class="fas fa-utensils fa-5x text-muted mb-3"></i>
+                <h4 class="text-muted">No Meal Plan Yet</h4>
+                <p class="text-muted">Configure your preferences and click "Generate Meal Plan" to get started</p>
+            </div>
+
+            <!-- Nutrition Summary -->
+            <div id="nutrition-summary" style="display: none;">
+                <div class="card nutrition-card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-chart-line"></i> Nutrition Summary
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="nutrition-stats">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meal Plan Table -->
+            <div id="meal-plan-result" style="display: none;">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-calendar-alt"></i> Your Meal Plan</span>
+                        <button class="btn btn-sm btn-light" onclick="printMealPlan()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="table table-hover table-striped mb-0" id="meal-plan-table">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Date</th>
+                                        <th>Breakfast</th>
+                                        <th>Mid-Morning</th>
+                                        <th>Lunch</th>
+                                        <th>Evening</th>
+                                        <th>Dinner</th>
+                                        <th>Calories</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="meal-plan-body">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentMealPlan = null;
+
+    // Load preferences on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPreferences();
+        
+        // Form submit handler
+        document.getElementById('meal-plan-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generateMealPlan();
+        });
+    });
+
+    function loadPreferences() {
+        fetch('/meal-plans/api/preferences')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Populate regions
+                    const regionSelect = document.getElementById('region');
+                    data.regions.forEach(region => {
+                        const option = document.createElement('option');
+                        option.value = region;
+                        option.textContent = region;
+                        regionSelect.appendChild(option);
+                    });
+
+                    // Populate diet types
+                    const dietSelect = document.getElementById('diet-type');
+                    data.diet_types.forEach(diet => {
+                        const option = document.createElement('option');
+                        option.value = diet;
+                        option.textContent = diet.charAt(0).toUpperCase() + diet.slice(1);
+                        dietSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading preferences:', error);
+            });
+    }
+
+    function generateMealPlan() {
+        const days = parseInt(document.getElementById('days').value);
+        const region = document.getElementById('region').value;
+        const dietType = document.getElementById('diet-type').value;
+
+        // Validation
+        if (days < 1 || days > 30) {
+            alert('Please enter a valid number of days (1-30)');
+            return;
+        }
+
+        // Show loading state
+        document.getElementById('initial-state').style.display = 'none';
+        document.getElementById('meal-plan-result').style.display = 'none';
+        document.getElementById('nutrition-summary').style.display = 'none';
+        document.getElementById('loading-state').style.display = 'block';
+
+        // Call API
+        fetch('/meal-plans/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                days: days,
+                region: region || null,
+                diet_type: dietType || null
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading-state').style.display = 'none';
+            
+            if (data.success) {
+                currentMealPlan = data;
+                displayMealPlan(data);
+            } else {
+                alert('Error: ' + (data.error || 'Could not generate meal plan'));
+                document.getElementById('initial-state').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('initial-state').style.display = 'block';
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+    function displayMealPlan(data) {
+        // Display nutrition summary
+        displayNutritionSummary(data.nutrition_summary);
+
+        // Display table
+        const tbody = document.getElementById('meal-plan-body');
+        tbody.innerHTML = '';
+
+        data.table_format.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${row.day}</strong></td>
+                <td>${new Date(row.date).toLocaleDateString()}</td>
+                <td>${row.breakfast || '-'}</td>
+                <td>${row.mid_morning_snack || '-'}</td>
+                <td>${row.lunch || '-'}</td>
+                <td>${row.evening_snack || '-'}</td>
+                <td>${row.dinner || '-'}</td>
+                <td>${Math.round(row.calories)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('meal-plan-result').style.display = 'block';
+        document.getElementById('nutrition-summary').style.display = 'block';
+    }
+
+    function displayNutritionSummary(summary) {
+        const container = document.getElementById('nutrition-stats');
+        container.innerHTML = `
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_calories)}</h5>
+                    <small class="text-muted">Avg Calories/Day</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_protein)}g</h5>
+                    <small class="text-muted">Avg Protein/Day</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_iron)}mg</h5>
+                    <small class="text-muted">Avg Iron/Day</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_calcium)}mg</h5>
+                    <small class="text-muted">Avg Calcium/Day</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_fiber)}g</h5>
+                    <small class="text-muted">Avg Fiber/Day</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center">
+                    <h5 class="text-success">${Math.round(summary.avg_daily_folic_acid)}mcg</h5>
+                    <small class="text-muted">Avg Folic Acid/Day</small>
+                </div>
+            </div>
+        `;
+    }
+
+    function printMealPlan() {
+        window.print();
+    }
+</script>
+{% endblock %}

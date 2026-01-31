@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Maternal Food Recommendation AI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-home text-primary"></i> Welcome, {{ current_user.full_name }}!
+            </h1>
+            <p class="lead text-muted">
+                You are currently in Trimester {{ current_user.current_trimester }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row my-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">AI Chatbot</h5>
+                    <p class="card-text">Ask questions about food safety and nutrition</p>
+                    <a href="/chatbot" class="btn btn-primary">
+                        <i class="fas fa-comments"></i> Start Chatting
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Meal Plans</h5>
+                    <p class="card-text">Generate personalized meal plans for your trimester</p>
+                    <a href="/meal-plans" class="btn btn-success">
+                        <i class="fas fa-calendar-alt"></i> Create Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Recommendations</h5>
+                    <p class="card-text">Get personalized food recommendations</p>
+                    <a href="/recommendations" class="btn btn-warning">
+                        <i class="fas fa-list"></i> View Recommendations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trimester-Specific Tips -->
+    <div class="row my-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb text-warning"></i> 
+                        Trimester {{ current_user.current_trimester }} Nutrition Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if current_user.current_trimester == 1 %}
+                        <ul>
+                            <li>Focus on <strong>folic acid</strong> (600 mcg daily) - found in spinach, lentils, and fortified grains</li>
+                            <li>Stay hydrated and eat small, frequent meals to manage nausea</li>
+                            <li>Include foods rich in <strong>vitamin B6</strong> to help with morning sickness</li>
+                            <li>Avoid raw or undercooked foods, unpasteurized dairy, and high-mercury fish</li>
+                        </ul>
+                    {% elif current_user.current_trimester == 2 %}
+                        <ul>
+                            <li>Increase <strong>calcium</strong> intake (1000 mg daily) - milk, yogurt, cheese, almonds</li>
+                            <li>Focus on <strong>omega-3 fatty acids</strong> for baby's brain development</li>
+                            <li>Include iron-rich foods to support increased blood volume</li>
+                            <li>Maintain a balanced diet with adequate protein (70g daily)</li>
+                        </ul>
+                    {% else %}
+                        <ul>
+                            <li>Continue high <strong>iron</strong> intake (27 mg daily) - lentils, spinach, eggs</li>
+                            <li>Increase <strong>protein</strong> to 75g daily for baby's rapid growth</li>
+                            <li>Include fiber-rich foods to prevent constipation</li>
+                            <li>Traditional foods like dates and ghee may help prepare for labor</li>
+                            <li>Eat small, frequent meals to manage heartburn</li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row my-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-clock"></i> Getting Started</h4>
+            <div class="list-group">
+                <a href="/chatbot" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1"><i class="fas fa-robot text-primary"></i> Try the AI Chatbot</h6>
+                        <small class="text-muted">Recommended</small>
+                    </div>
+                    <p class="mb-1">Ask questions about pregnancy nutrition and food safety</p>
+                </a>
+                <a href="/meal-plans" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1"><i class="fas fa-utensils text-success"></i> Generate Your First Meal Plan</h6>
+                        <small class="text-muted">Recommended</small>
+                    </div>
+                    <p class="mb-1">Create a week-long personalized meal plan</p>
+                </a>
+                <a href="/recommendations" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1"><i class="fas fa-star text-warning"></i> View Food Recommendations</h6>
+                    </div>
+                    <p class="mb-1">Discover foods that are perfect for your trimester</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
