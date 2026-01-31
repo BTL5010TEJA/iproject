@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block title %}Food Recommendations - Maternal Food Recommendation AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .food-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid #28a745;
+        overflow: hidden;
+    }
+    
+    .food-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .score-badge {
+        font-size: 1.2rem;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    
+    .score-excellent { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+    .score-good { background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); }
+    .score-fair { background: linear-gradient(135deg, #ffc107 0%, #ff6c00 100%); }
+    
+    .nutrition-info {
+        font-size: 0.85rem;
+    }
+    
+    .warning-badge {
+        background-color: #ffc107;
+        color: #000;
+        display: inline-block;
+        margin: 4px 4px 4px 0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .category-section {
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    .category-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        margin-bottom: 15px;
+    }
+    
+    .feedback-buttons {
+        margin-top: 10px;
+        display: flex;
+        gap: 5px;
+    }
+    
+    .feedback-btn {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .header-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .filter-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm header-card">
+                <div class="card-body py-4">
+                    <h1 class="mb-2">
+                        <i class="fas fa-star"></i> Food Recommendations
+                    </h1>
+                    <p class="lead mb-0">
+                        <i class="fas fa-baby"></i> Trimester {{ current_user.current_trimester }} | 
+                        <i class="fas fa-utensils"></i> {{ current_user.dietary_preferences|default('vegetarian')|title }} Diet
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <!-- Filters Card -->
+            <div class="card border-0 shadow-sm filter-card h-100">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-filter"></i> Filters & Options
+                </div>
+                <div class="card-body">
+                    <form id="recommendation-filters">
+                        <div class="mb-3">
+                            <label for="meal-type" class="form-label fw-600">Meal Type</label>
+                            <select class="form-select" id="meal-type">
+                                <option value="">🍽️ All Meals</option>
+                                <option value="breakfast">🌅 Breakfast</option>
+                                <option value="mid_morning_snack">🥤 Mid-Morning</option>
+                                <option value="lunch">🍲 Lunch</option>
+                                <option value="evening_snack">🍪 Evening Snack</option>
+                                <option value="dinner">🌙 Dinner</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="max-items" class="form-label fw-600">Number of Items</label>
+                            <input 
+                                type="range" 
+                                class="form-range" 
+                                id="max-items" 
+                                min="5" 
+                                max="50" 
+                                value="10"
+                                step="5"
+                            >
+                            <small class="text-muted">Show: <span id="items-value">10</span> items</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-magic"></i> Get Recommendations
+                        </button>
+                    </form>
+
+                    <hr>
+
+                    <!-- Info Card -->
+                    <div class="info-card p-3">
+                        <h6 class="fw-600 mb-2"><i class="fas fa-info-circle text-info"></i> How It Works</h6>
+                        <small class="text-muted">
+                            Recommendations are based on:
+                            <ul class="mt-2 ps-3 mb-0">
+                                <li>Your trimester</li>
+                                <li>Nutrition needs</li>
+                                <li>Safety & warnings</li>
+                                <li>Your preferences</li>
+                            </ul>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted"><i class="fas fa-wand-magic-sparkles"></i> Finding the best foods for you...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i> <span id="error-text"></span>
+            </div>
+
+            <!-- Recommendations Container -->
+            <div id="recommendations-container">
+                <div class="alert alert-info border-0 shadow-sm">
+                    <i class="fas fa-rocket"></i> <strong>Welcome!</strong> Click "Get Recommendations" to discover foods perfect for your pregnancy.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('recommendation-filters');
+    const loadingDiv = document.getElementById('loading');
+    const container = document.getElementById('recommendations-container');
+    const errorDiv = document.getElementById('error-message');
+    const maxItemsSlider = document.getElementById('max-items');
+    const itemsValue = document.getElementById('items-value');
+
+    // Update slider value display
+    maxItemsSlider.addEventListener('input', function() {
+        itemsValue.textContent = this.value;
+    });
+
+    // Load recommendations on form submit
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        loadRecommendations();
+    });
+
+    function loadRecommendations() {
+        const mealType = document.getElementById('meal-type').value;
+        const maxItems = document.getElementById('max-items').value;
+
+        // Build query string
+        let query = `max_items=${maxItems}`;
+        if (mealType) {
+            query += `&meal_type=${mealType}`;
+        }
+
+        // Show loading, hide error
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        container.innerHTML = '';
+
+        // Fetch recommendations
+        fetch(`/recommendations/api/recommendations?${query}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to load recommendations');
+                return response.json();
+            })
+            .then(data => {
+                loadingDiv.style.display = 'none';
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    displayRecommendations(data);
+                }
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                showError(error.message || 'Error loading recommendations');
+            });
+    }
+
+    function showError(message) {
+        errorDiv.style.display = 'block';
+        document.getElementById('error-text').textContent = message;
+        container.innerHTML = '';
+    }
+
+    function displayRecommendations(data) {
+        if (!data.recommendations || data.recommendations.length === 0) {
+            container.innerHTML = `
+                <div class="alert alert-warning border-0 shadow-sm">
+                    <i class="fas fa-exclamation-circle"></i> No recommendations found. Try adjusting your filters.
+                </div>
+            `;
+            return;
+        }
+
+        let html = `
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle text-success"></i> 
+                        ${data.recommendations.length} Foods Recommended
+                    </h5>
+                    <small class="text-muted">For Trimester ${data.trimester} - ${data.dietary_preference} diet</small>
+                </div>
+            </div>
+        `;
+
+        html += '<div class="row">';
+        
+        data.recommendations.forEach((rec) => {
+            const food = rec.food;
+            const scorePercent = Math.round(rec.score);
+            let scoreClass = 'score-excellent';
+            if (scorePercent < 60) scoreClass = 'score-fair';
+            else if (scorePercent < 80) scoreClass = 'score-good';
+
+            html += `
+                <div class="col-md-6 mb-4">
+                    <div class="card food-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">${food.name || 'N/A'}</h5>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tag"></i> ${food.category || 'General'} | 
+                                        <i class="fas fa-map-marker"></i> ${food.regional_origin || 'All India'}
+                                    </small>
+                                </div>
+                                <span class="badge score-badge text-white ${scoreClass}">${scorePercent}%</span>
+                            </div>
+                            
+                            ${rec.warnings && rec.warnings.length > 0 ? `
+                                <div class="mb-3">
+                                    ${rec.warnings.map(w => `
+                                        <span class="warning-badge">
+                                            <i class="fas fa-exclamation-triangle"></i> ${w}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+
+                            ${food.traditional_usage ? `
+                                <p class="mb-2"><small><strong>📚 Traditional Use:</strong> ${food.traditional_usage}</small></p>
+                            ` : ''}
+
+                            ${food.health_benefits ? `
+                                <p class="mb-2"><small><strong>💪 Benefits:</strong> ${food.health_benefits}</small></p>
+                            ` : ''}
+
+                            <div class="nutrition-info mt-3 pt-3 border-top">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small><strong>Nutrition</strong></small>
+                                    <small class="text-success fw-600">${rec.nutrition_score}%</small>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: ${rec.nutrition_score}%"></div>
+                                </div>
+                                
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small class="text-muted">Trimester: <strong>${rec.trimester_score}%</strong></small>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <small class="text-muted">Preference: <strong>${rec.preference_score}%</strong></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feedback-buttons">
+                                <button class="btn btn-sm btn-outline-success feedback-btn" onclick="submitFeedback(${food.id}, 'helpful')" title="Mark as helpful">
+                                    <i class="fas fa-thumbs-up"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning feedback-btn" onclick="submitFeedback(${food.id}, 'tried')" title="I tried this">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger feedback-btn" onclick="submitFeedback(${food.id}, 'not_helpful')" title="Not helpful">
+                                    <i class="fas fa-thumbs-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    window.submitFeedback = function(foodId, feedback) {
+        fetch('/recommendations/api/recommendations/feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                food_id: foodId,
+                feedback: feedback
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Show brief feedback
+            const feedbackText = {
+                'helpful': '👍 Marked as helpful',
+                'tried': '✅ Great! Hope you enjoyed it',
+                'not_helpful': '👎 Thanks for the feedback'
+            };
+            alert(feedbackText[feedback]);
+        })
+        .catch(error => console.error('Error:', error));
+    };
+});
+</script>
+{% endblock %}
