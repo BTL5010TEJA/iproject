@@ -1,6 +1,0 @@
-POST /meal-plans/api/generate
-{
-  "days": 7,
-  "region": "North Indian",  // optional
-  "diet_type": "vegetarian"   // optional
-}
