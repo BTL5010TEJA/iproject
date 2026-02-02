@@ -529,7 +529,7 @@ Friday,Snack,Vegetable oats porridge (small bowl),South Indian,Veg,Trimester 3
 Friday,Snack,Ragi malt with dates (small glass),South Indian,Veg,Trimester 3
 Friday,Snack,Moong dal chilla with coriander chutney,South Indian,Veg,Trimester 3
 Friday,Snack,Steamed ridge gourd & carrot cubes,South Indian,Veg,Trimester 3
-Friday,Snack,Masala corn (steamed, mild),South Indian,Veg,Trimester 3
+Friday,Snack,Masala corn,South Indian,Veg,Trimester 3
 Friday,Snack,Cucumber & carrot sticks with yogurt dip,South Indian,Veg,Trimester 3
 Friday,Snack,Mini moong dal idli with coconut chutney,South Indian,Veg,Trimester 3
 Friday,Snack,Boiled peas & sweet corn salad with lemon,South Indian,Veg,Trimester 3
@@ -558,8 +558,8 @@ Sunday,Breakfast,Ragi dosa with coconut chutney,South Indian,Veg,Trimester 3
 Sunday,Lunch,Steamed rice with vegetable sambar,South Indian,Veg,Trimester 3
 Monday,Lunch,Ragi roti with paneer butter masala,South Indian,Veg,Trimester 3
 Monday,Lunch,Spinach dal with steamed rice,South Indian,Veg,Trimester 3
-Monday,Lunch,Mixed vegetable poriyal (beans, carrot, capsicum),South Indian,Veg,Trimester 3
-Monday,Lunch,Chicken sukka (mild, optional Non-Veg),South Indian,Non-Veg,Trimester 3
+Monday,Lunch,Mixed vegetable poriyal,South Indian,Veg,Trimester 3
+Monday,Lunch,Chicken sukka,South Indian,Non-Veg,Trimester 3
 Monday,Lunch,Curd rice with grated carrot and coriander,South Indian,Veg,Trimester 3
 Monday,Lunch,Methi (fenugreek) leaves curry with chapati,South Indian,Veg,Trimester 3
 Monday,Snack,Mini idli with coconut chutney,South Indian,Veg,Trimester 3
@@ -584,7 +584,7 @@ Monday,Snack,Cottage cheese cubes (paneer, small),South Indian,Veg,Trimester 3
 Monday,Snack,Light egg bhurji (small portion),South Indian,Non-Veg,Trimester 3
 Saturday,Breakfast,Pomegranate slices (small),South Indian,Veg,Trimester 3
 Saturday,Breakfast,Banana (medium),South Indian,Veg,Trimester 3
-Saturday,Breakfast,Figs (ripe, 2-3 pieces),South Indian,Veg,Trimester 3
+Saturday,Breakfast,Figs,South Indian,Veg,Trimester 3
 Saturday,Breakfast,Guava slices (small),South Indian,Veg,Trimester 3
 Saturday,Dinner,Sambar with mixed vegetables and steamed rice,South Indian,Veg,Trimester 3
 Saturday,Dinner,Curd rice with grated carrot and coriander,South Indian,Veg,Trimester 3
@@ -598,7 +598,7 @@ Sunday,Dinner,Parotta (small portion) with vegetable kothu,South Indian,Veg,Trim
 Sunday,Dinner,Soy chunks curry with chapati,South Indian,Veg,Trimester 3
 Saturday,Dinner,Kidney beans curry with rice,South Indian,Veg,Trimester 3
 Saturday,Lunch,Vegetable Biryani with raita,South Indian,Veg,Trimester 3
-Saturday,Lunch,Chicken Biryani (mild, optional Non-Veg),South Indian,Non-Veg,Trimester 3
+Saturday,Lunch,Chicken Biryani,South Indian,Non-Veg,Trimester 3
 Saturday,Lunch,Paneer butter masala with chapati,South Indian,Veg,Trimester 3
 Saturday,Lunch,Vegetable kurma with parotta,South Indian,Veg,Trimester 3
 Saturday,Lunch,Spinach dal with steamed rice,South Indian,Veg,Trimester 3
@@ -642,13 +642,13 @@ Thursday,Snack,Kosambari (moong dal salad),South Indian,Veg,Trimester 3
 Thursday,Snack,Steamed corn with a pinch of salt,South Indian,Veg,Trimester 3
 Thursday,Snack,Vegetable sandwich (small portion),South Indian,Veg,Trimester 3
 Thursday,Snack,Rava kesari (small portion),South Indian,Veg,Trimester 3
-Thursday,Snack,Banana or seasonal fruit (ripe, small),South Indian,Veg,Trimester 3
+Thursday,Snack,Banana or seasonal fruit,South Indian,Veg,Trimester 3
 Thursday,Snack,Curd (small bowl) with flax seeds,South Indian,Veg,Trimester 3
 Thursday,Snack,Murukku (light or baked),South Indian,Veg,Trimester 3
 Thursday,Snack,Mini vegetable dosa with coconut chutney,South Indian,Veg,Trimester 3
 Thursday,Snack,Idiyappam (steamed string hoppers) with milk (small),South Indian,Veg,Trimester 3
 Thursday,Snack,Vegetable uthappam (small) with coconut chutney,South Indian,Veg,Trimester 3
-Thursday,Snack,Peanut chikki (small piece, occasional),South Indian,Veg,Trimester 3
+Thursday,Snack,Peanut chikki,South Indian,Veg,Trimester 3
 Thursday,Snack,Boiled sweet potato cubes with mild seasoning,South Indian,Veg,Trimester 3
 Thursday,Snack,Steamed ridge gourd with mild seasoning,South Indian,Veg,Trimester 3
 Thursday,Snack,Mixed vegetable salad (light),South Indian,Veg,Trimester 3
@@ -657,7 +657,7 @@ Thursday,Snack,Roasted chickpeas with mild spices (small handful),South Indian,V
 Tuesday,Breakfast,Apple slices with peanut butter,South Indian,Veg,Trimester 3
 Tuesday,Breakfast,Figs and dates porridge (millet/ragi),South Indian,Veg,Trimester 3
 Tuesday,Breakfast,Banana and yogurt smoothie,South Indian,Veg,Trimester 3
-Tuesday,Breakfast,Mixed nuts (almonds, cashews, walnuts),South Indian,Veg,Trimester 3
+Tuesday,Breakfast,Mixed nuts,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Lemon rice with steamed beans,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Mixed vegetable sambar with rice,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Chickpea sundal with grated coconut,South Indian,Veg,Trimester 3
@@ -665,7 +665,7 @@ Tuesday,Lunch,Mixed vegetable poriyal with chapati,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Curd rice with grated carrot and coriander,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Steamed sweet corn with light seasoning,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Roasted peanuts or cashews (small handful),South Indian,Veg,Trimester 3
-Tuesday,Lunch,Chicken sukka (mild, optional Non-Veg),South Indian,Non-Veg,Trimester 3
+Tuesday,Lunch,Chicken sukka ,South Indian,Non-Veg,Trimester 3
 Tuesday,Lunch,Spinach dal with steamed rice,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Vegetable kurma with chapati,South Indian,Veg,Trimester 3
 Tuesday,Lunch,Vegetable upma with grated carrots and peas,South Indian,Veg,Trimester 3
@@ -692,10 +692,10 @@ Wednesday,Lunch,Mixed vegetable poriyal with chapati,South Indian,Veg,Trimester 
 Wednesday,Lunch,Curd rice with grated carrot and coriander,South Indian,Veg,Trimester 3
 Wednesday,Lunch,Steamed sweet corn with mild seasoning,South Indian,Veg,Trimester 3
 Wednesday,Lunch,Roasted peanuts (small handful) as side/snack,South Indian,Veg,Trimester 3
-Wednesday,Lunch,Chicken sukka (mild, optional Non-Veg),South Indian,Non-Veg,Trimester 3
+Wednesday,Lunch,Chicken sukka,South Indian,Non-Veg,Trimester 3
 Wednesday,Lunch,Spinach dal with steamed rice,South Indian,Veg,Trimester 3
 Wednesday,Lunch,Vegetable kurma with chapati,South Indian,Veg,Trimester 3
-Wednesday,Lunch,Masala idli (mini, 1-2 pieces) with coconut chutney as side,South Indian,Veg,Trimester 3
+Wednesday,Lunch,Masala idli  with coconut chutney as side,South Indian,Veg,Trimester 3
 Wednesday,Lunch,Ragi malt (small glass),South Indian,Veg,Trimester 3
 Wednesday,Lunch,Pineapple or pomegranate slices (small portion),South Indian,Veg,Trimester 3
 Wednesday,Lunch,Dates (2-3 pieces),South Indian,Veg,Trimester 3
@@ -707,7 +707,7 @@ Wednesday,Snack,Kosambari (moong dal salad with cucumber),South Indian,Veg,Trime
 Wednesday,Snack,Steamed corn with a pinch of salt,South Indian,Veg,Trimester 3
 Wednesday,Snack,Vegetable sandwich (small portion),South Indian,Veg,Trimester 3
 Wednesday,Snack,Rava kesari (small portion),South Indian,Veg,Trimester 3
-Wednesday,Snack,Banana or seasonal fruit (ripe, small),South Indian,Veg,Trimester 3
+Wednesday,Snack,Banana or seasonal fruit,South Indian,Veg,Trimester 3
 Wednesday,Snack,Curd (small bowl) with flax seeds,South Indian,Veg,Trimester 3
 Wednesday,Snack,Murukku (light or baked, small portion),South Indian,Veg,Trimester 3
 Wednesday,Snack,Mini vegetable dosa with coconut chutney,South Indian,Veg,Trimester 3
